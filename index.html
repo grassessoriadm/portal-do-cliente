@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Cliente - GR Assessoria</title>
+    <style>
+        :root {
+            --card-bg: #ffffff;
+            --text-dark: #2d2d2d;
+            --primary-color: #6b1d2f;
+            --accent-gold: #c39a4f;
+            --rose-bg: #fdf6f6;
+            --yellow-postit: #fff9e6;
+            --yellow-border: #d4af37;
+        }
+
+        @keyframes fadeInSlide { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes softPulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #e0e0e0; color: var(--text-dark); margin: 0; padding: 20px 15px; display: flex; justify-content: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 450px; animation: fadeInSlide 0.6s ease-out; }
+        .header { text-align: center; margin-bottom: 25px; background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .logo-marca { width: 100%; max-width: 380px; height: auto; display: block; margin: 0 auto; }
+        
+        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); }
+        .card-title { color: var(--primary-color); font-size: 18px; font-weight: 700; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid var(--accent-gold); display: inline-block; padding-bottom: 3px; }
+        
+        .login-input { width: 100%; padding: 12px; font-size: 18px; border: 2px solid #e0e0e0; border-radius: 10px; box-sizing: border-box; margin-bottom: 18px; text-align: center; font-weight: bold; letter-spacing: 5px; }
+        .error-message { color: #d9534f; font-size: 14px; text-align: center; margin-bottom: 15px; display: none; font-weight: bold; }
+
+        .postit-aviso { background-color: var(--yellow-postit); border-left: 6px solid var(--yellow-border); border-radius: 12px; padding: 16px; margin-bottom: 20px; display: none; animation: softPulse 2s infinite ease-in-out; }
+        .postit-title { font-weight: bold; color: #8a6d1c; margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; }
+        .postit-text { margin: 0; font-size: 14px; color: #444; }
+
+        .welcome-container { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); }
+        .avatar-profissional { width: 75px; height: 75px; object-fit: contain; border-radius: 50%; }
+        .welcome { font-size: 20px; font-weight: 700; color: var(--primary-color); }
+        
+        .metric-box { background: var(--rose-bg); border-left: 4px solid var(--primary-color); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+        .metric-label { font-size: 11px; color: #7a525b; font-weight: 600; text-transform: uppercase; }
+        .metric-value { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-top: 4px; }
+
+        .btn { display: block; background-color: var(--primary-color); color: white; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; border: none; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background-color: #521422; }
+        
+        .secao-titulo-escura { margin: 25px 0 15px 5px; color: var(--primary-color); font-size: 16px; font-weight: 700; text-transform: uppercase; }
+        .img-button-link { display: block; margin: 12px auto 0 auto; width: 100%; max-width: 280px; }
+        .img-btn-file { width: 100%; height: auto; display: block; border-radius: 50px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header"><img src="logo.jpg" class="logo-marca" alt="Logo"></div>
+
+    <div id="tela-login" class="card">
+        <h3 class="card-title" style="border:none;">Área Restrita</h3>
+        <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Digite os 4 primeiros números do seu CPF (se começar com 0, não precisa digitar o zero):</p>
+        <input type="password" id="input-cpf" class="login-input" maxlength="4" placeholder="0000" inputmode="numeric">
+        <button onclick="verificarAcesso()" class="btn" style="width:100%;">ACESSAR</button>
+        <div id="msg-erro" class="error-message">Acesso não localizado.</div>
+    </div>
+
+    <div id="painel-cliente" style="display:none;">
+        <div id="postit-container" class="postit-aviso">
+            <p class="postit-title">📌 Recado Importante</p>
+            <p id="txt-aviso" class="postit-text"></p>
+        </div>
+
+        <div class="welcome-container">
+            <img src="avatar.jpg" class="avatar-profissional" alt="Avatar">
+            <div class="welcome-text">
+                <div class="welcome">Olá, <span id="txt-nome"></span></div>
+                <div id="txt-competencia" style="font-size:13px;"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Resumo do Meu Negócio</h3>
+            <div class="metric-box">
+                <div class="metric-label">Faturamento do Mês</div>
+                <div class="metric-value" id="txt-faturamento"></div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <div class="metric-box" style="flex:1;"><div class="metric-label">Acumulado do Ano</div><div class="metric-value" id="txt-acumulado" style="font-size:16px;"></div></div>
+                <div class="metric-box" style="flex:1;"><div class="metric-label">Utilizado (MEI)</div><div class="metric-value" id="txt-utilizado" style="font-size:16px;"></div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Relatório Completo</h3>
+            <a href="#" id="lnk-relatorio" class="btn" target="_blank">VER RELATÓRIO →</a>
+        </div>
+
+        <h3 class="secao-titulo-escura">Guias e Pagamentos</h3>
+        
+        <div class="card">
+            <strong style="color:var(--primary-color); font-size: 15px;">Guia DAS</strong>
+            <p style="font-size: 11px; color: #666; margin: 5px 0 10px 0;">Emita e pague sua GUIA DAS do mês.</p>
+            <a href="#" id="lnk-das" class="btn" target="_blank">ACESSAR GUIA</a>
+        </div>
+
+        <div class="card">
+            <strong style="color:var(--primary-color); font-size: 15px;">Outros Documentos</strong>
+            <p style="font-size: 11px; color: #666; margin: 5px 0 10px 0;">Parcelamentos, DARFs e demais pagamentos.</p>
+            <a href="#" id="lnk-outros" class="btn" target="_blank">ACESSAR PASTAS</a>
+        </div>
+
+        <a href="https://grassessoriadm.github.io/portal-do-cliente/" target="_blank" class="img-button-link"><img src="botton1.jpg" class="img-btn-file"></a>
+        <a href="https://wa.me/message/2IBHQ3HDJNBLC1" target="_blank" class="img-button-link"><img src="botton2.jpg" class="img-btn-file"></a>
+    </div>
+</div>
+
+<script>
+    const bancoClientes = {
+        "1721": { nome: "Alisson Elias de Souza", comp: "junho/2026", fat: "R$ 4.672,00", ac: "R$ 21.816,00", ut: "26,93%", rel: "https://drive.google.com/file/d/1ZrxPERJUUQ7jvOX3Lymdg5C5NeAeigR_/view?usp=drive_link", das: "https://drive.google.com/file/d/1Pw6vNm8teafBXBaYNcuhywFNMNN2UEX7/view?usp=drive_link", out: "https://drive.google.com/drive/folders/1EXfhkArOlu5IX2nYLBn_RrnXBMv71rg1?usp=drive_link", av: "NÃO", txt: "" },
+        "1298": { nome: "Glazielen Lourenço da Silva", comp: "junho/2026", fat: "R$ 1.705,93", ac: "R$ 23.235,99", ut: "28,69%", rel: "https://drive.google.com/file/d/1m2qgJcI8d3Omvr9ZxB8-AyQjB2VdHtGO/view?usp=drive_link", das: "https://drive.google.com/file/d/1v8BYJowwtyTMnrzDG47Vl1oHClvY1O8s/view?usp=drive_link", out: "https://drive.google.com/drive/folders/1Dp72wfLw31oZDjUaNtRFXubHSYGjY936?usp=drive_link", av: "SIM", txt: "Por favor, envie o extrato restante." },
+        "4490": { nome: "Marco Antonio da Silva Oliveira", comp: "junho/2026", fat: "R$ 0,00", ac: "R$ 0,00", ut: "0,00%", rel: "https://drive.google.com/file/d/1fUdyt3o8w8COUMnsbTW5R1OgdlKZLjgC/view?usp=drive_link", das: "https://drive.google.com/file/d/1_zqw9b1XlA0YoyM-39opBOvk_okjEfsF/view?usp=drive_link", out: "https://drive.google.com/drive/folders/1YkwcEhYe2EwOb3rEuoO_5uWJi8OeOagQ?usp=drive_link", av: "NÃO", txt: "" },
+        "2834": { nome: "Givanilda Maria de Lemos", comp: "junho/2026", fat: "R$ 5.230,00", ac: "R$ 21.580,30", ut: "26,64%", rel: "https://drive.google.com/file/d/1yUZgNRFk27erkvhcOrx5MeckuPgqQbm0/view?usp=drive_link", das: "https://drive.google.com/file/d/1I-Y09mOMaqWn1gXQFhNHf072gkDjLjmD/view?usp=drive_link", out: "https://drive.google.com/drive/folders/1l2CgQzVQbqcISh2ANcKKvUAgOFjozdAW?usp=drive_link", av: "NÃO", txt: "" },
+        "1626": { nome: "Gabrielle Macedo dos Santos Rocha", comp: "junho/2026", fat: "R$ 5.230,00", ac: "R$ 21.580,30", ut: "26,64%", rel: "https://drive.google.com/file/d/1yUZgNRFk27erkvhcOrx5MeckuPgqQbm0/view?usp=drive_link", das: "https://drive.google.com/file/d/1I-Y09mOMaqWn1gXQFhNHf072gkDjLjmD/view?usp=drive_link", out: "https://drive.google.com/drive/folders/1l2CgQzVQbqcISh2ANcKKvUAgOFjozdAW?usp=drive_link", av: "SIM", txt: "Pagar a guia DAS no mês vigente." },
+        "3002": { nome: "Josefa Macedo dos Santos", comp: "junho/2026", fat: "R$ 5.230,00", ac: "R$ 21.580,30", ut: "26,64%", rel: "https://drive.google.com/file/d/1yUZgNRFk27erkvhcOrx5MeckuPgqQbm0/view?usp=drive_link", das: "https://drive.google.com/file/d/1I-Y09mOMaqWn1gXQFhNHf072gkDjLjmD/view?usp=drive_link", out: "https://drive.google.com/drive/folders/1l2CgQzVQbqcISh2ANcKKvUAgOFjozdAW?usp=drive_link", av: "NÃO", txt: "" }
+    };
+
+    function verificarAcesso() {
+        let s = document.getElementById('input-cpf').value.trim().replace(/^0+/, '');
+        
+        if (bancoClientes[s]) {
+            const d = bancoClientes[s];
+            document.getElementById('txt-nome').innerText = d.nome;
+            document.getElementById('txt-competencia').innerText = "Competência: " + d.comp;
+            document.getElementById('txt-faturamento').innerText = d.fat;
+            document.getElementById('txt-acumulado').innerText = d.ac;
+            document.getElementById('txt-utilizado').innerText = d.ut;
+            document.getElementById('lnk-relatorio').href = d.rel;
+            document.getElementById('lnk-das').href = d.das;
+            document.getElementById('lnk-outros').href = d.out;
+            if (d.av === "SIM") { document.getElementById('txt-aviso').innerText = d.txt; document.getElementById('postit-container').style.display = 'block'; }
+            document.getElementById('tela-login').style.display = 'none';
+            document.getElementById('painel-cliente').style.display = 'block';
+        } else { document.getElementById('msg-erro').style.display = 'block'; }
+    }
+</script>
+</body>
+</html>
