@@ -4,8 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal do Cliente - GR Assessoria</title>
+    <link rel="icon" href="logo2.png" type="image/png">
     <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        /* === VARIÁVEIS DO PORTAL GR (login escuro) === */
         :root {
+            --marsala:#6d213c; --marsala-dark:#4a1528; --marsala-light:#8a2e50;
+            --burned-rose:#b36b7a; --burned-rose-light:#c98d99; --burned-rose-dark:#964f5e;
+            --off-white:#fdfbf7; --off-white-dim:#f5f0e8;
+            --bg-dark:#1a0e14; --bg-card:#2a1822; --bg-card-hover:#3a2230; --bg-input:#241420;
+            --text-primary:#fdfbf7; --text-secondary:#c98d99; --text-muted:#8a6070;
+            --border-subtle:rgba(179,107,122,0.15); --border-active:rgba(179,107,122,0.4);
+            --shadow-glow:rgba(109,33,60,0.35);
+            --font-primary:'Segoe UI','Helvetica Neue',Arial,sans-serif;
+            --font-display:Georgia,'Times New Roman',serif;
+            --radius-sm:8px; --radius-md:14px; --radius-lg:20px; --radius-full:50px;
+
+            /* === VARIÁVEIS ORIGINAIS DO PORTAL DO CLIENTE (conteúdo claro) === */
             --card-bg: #ffffff;
             --text-dark: #2d2d2d;
             --primary-color: #6b1d2f;
@@ -15,55 +31,150 @@
             --yellow-border: #d4af37;
         }
 
-        @keyframes fadeInSlide { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes softPulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        html { font-size:16px; scroll-behavior:smooth; }
+        body { font-family:var(--font-primary); background-color:var(--bg-dark); color:var(--text-primary); min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
 
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #e0e0e0; color: var(--text-dark); margin: 0; padding: 20px 15px; display: flex; justify-content: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 450px; animation: fadeInSlide 0.6s ease-out; }
-        .header { text-align: center; margin-bottom: 25px; background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .logo-marca { width: 100%; max-width: 380px; height: auto; display: block; margin: 0 auto; }
-        
-        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); }
-        .card-title { color: var(--primary-color); font-size: 18px; font-weight: 700; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid var(--accent-gold); display: inline-block; padding-bottom: 3px; }
-        
-        .login-input { width: 100%; padding: 12px; font-size: 18px; border: 2px solid #e0e0e0; border-radius: 10px; box-sizing: border-box; margin-bottom: 18px; text-align: center; font-weight: bold; letter-spacing: 5px; }
-        .error-message { color: #d9534f; font-size: 14px; text-align: center; margin-bottom: 15px; display: none; font-weight: bold; }
+        /* === ANIMAÇÕES === */
+        @keyframes fadeInSlide { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes softPulse { 0%{transform:scale(1)} 50%{transform:scale(1.02)} 100%{transform:scale(1)} }
+        @keyframes loginAppear { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
+        @keyframes subtleDrift { 0%{transform:translate(0,0) rotate(0deg)} 100%{transform:translate(30px,-20px) rotate(2deg)} }
+        @keyframes shakeError { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+        @keyframes fadeInDashboard { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
-        .postit-aviso { background-color: var(--yellow-postit); border-left: 6px solid var(--yellow-border); border-radius: 12px; padding: 16px; margin-bottom: 20px; display: none; animation: softPulse 2s infinite ease-in-out; }
-        .postit-title { font-weight: bold; color: #8a6d1c; margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; }
-        .postit-text { margin: 0; font-size: 14px; color: #444; }
+        /* ================================================================
+           TELA DE LOGIN (estilo Portal GR)
+           ================================================================ */
+        #login-screen { display:flex; align-items:center; justify-content:center; min-height:100vh; background:radial-gradient(ellipse at 20% 50%,rgba(109,33,60,0.2),transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(179,107,122,0.1),transparent 60%),var(--bg-dark); position:relative; z-index:10; }
+        #login-screen.hidden { display:none; }
+        #login-screen::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle at 30% 40%,rgba(109,33,60,0.08),transparent 40%),radial-gradient(circle at 70% 60%,rgba(179,107,122,0.06),transparent 40%); animation:subtleDrift 20s ease-in-out infinite alternate; pointer-events:none; }
+        .login-container { width:100%; max-width:440px; padding:1rem; position:relative; z-index:2; }
+        .login-card { background:linear-gradient(145deg,var(--bg-card),var(--marsala-dark)); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:3rem 2.5rem; text-align:center; box-shadow:0 25px 60px rgba(0,0,0,0.4),0 0 80px var(--shadow-glow); position:relative; overflow:hidden; animation:loginAppear 0.5s ease; }
+        .login-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,var(--burned-rose),var(--marsala-light),var(--burned-rose),transparent); }
+        .login-logo { width:120px; height:120px; margin:0 auto 1.5rem; display:block; border-radius:50%; object-fit:contain; }
+        .login-title { font-family:var(--font-display); font-size:1.15rem; font-weight:400; color:var(--off-white); letter-spacing:0.3px; margin-bottom:0.3rem; }
+        .login-subtitle { font-size:0.78rem; color:var(--text-secondary); letter-spacing:2px; text-transform:uppercase; margin-bottom:2rem; }
+        .login-form { display:flex; flex-direction:column; gap:1rem; }
+        .input-group { position:relative; }
+        .input-group input { width:100%; padding:16px 50px 16px 20px; background:var(--bg-input); border:1.5px solid var(--border-subtle); border-radius:var(--radius-full); color:var(--text-primary); font-size:1rem; font-family:var(--font-primary); outline:none; transition:all 0.3s ease; letter-spacing:1px; }
+        .input-group input::placeholder { color:var(--text-muted); letter-spacing:0.5px; }
+        .input-group input:focus { border-color:var(--burned-rose); box-shadow:0 0 0 3px rgba(179,107,122,0.15),0 4px 15px rgba(109,33,60,0.2); }
+        .toggle-password { position:absolute; right:16px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted); transition:color 0.3s ease; padding:4px; display:flex; align-items:center; }
+        .toggle-password:hover { color:var(--burned-rose); }
+        .toggle-password svg { width:20px; height:20px; }
+        .login-btn { width:100%; padding:16px; background:linear-gradient(135deg,var(--marsala),var(--marsala-light)); border:none; border-radius:var(--radius-full); color:var(--off-white); font-size:0.95rem; font-family:var(--font-primary); font-weight:600; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all 0.35s ease; margin-top:1rem; position:relative; overflow:hidden; }
+        .login-btn::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent); transition:left 0.5s ease; }
+        .login-btn:hover::before { left:100%; }
+        .login-btn:hover { background:linear-gradient(135deg,var(--marsala-light),var(--burned-rose-dark)); box-shadow:0 8px 30px rgba(109,33,60,0.5); transform:translateY(-1px); }
+        .login-btn:active { transform:translateY(0); }
+        .login-error { display:none; align-items:center; justify-content:center; gap:8px; padding:12px 16px; background:rgba(180,40,40,0.15); border:1px solid rgba(180,40,40,0.3); border-radius:var(--radius-sm); color:#e88; font-size:0.85rem; margin-top:0.5rem; animation:shakeError 0.4s ease; }
+        .login-error.visible { display:flex; }
+        .login-error svg { width:18px; height:18px; flex-shrink:0; }
+        .login-hint { font-size:0.75rem; color:var(--text-muted); margin-top:0.5rem; }
 
-        .welcome-container { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); }
-        .avatar-profissional { width: 75px; height: 75px; object-fit: contain; border-radius: 50%; }
-        .welcome { font-size: 20px; font-weight: 700; color: var(--primary-color); }
-        
-        .metric-box { background: var(--rose-bg); border-left: 4px solid var(--primary-color); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
-        .metric-label { font-size: 11px; color: #7a525b; font-weight: 600; text-transform: uppercase; }
-        .metric-value { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-top: 4px; }
+        /* ================================================================
+           PAINEL DO CLIENTE (tema claro original)
+           ================================================================ */
+        #painel-cliente { display:none; min-height:100vh; background:#e0e0e0; animation:fadeInDashboard 0.6s ease; }
+        #painel-cliente.visible { display:block; }
 
-        .btn { display: block; background-color: var(--primary-color); color: white; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; border: none; cursor: pointer; transition: 0.2s; }
-        .btn:hover { background-color: #521422; }
-        
-        .secao-titulo-escura { margin: 25px 0 15px 5px; color: var(--primary-color); font-size: 16px; font-weight: 700; text-transform: uppercase; }
-        .img-button-link { display: block; margin: 12px auto 0 auto; width: 100%; max-width: 280px; }
-        .img-btn-file { width: 100%; height: auto; display: block; border-radius: 50px; }
+        /* Header com logout (estilo Portal GR adaptado) */
+        .client-header { background:linear-gradient(180deg,rgba(26,14,20,0.97),rgba(26,14,20,0.85)); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--border-subtle); padding:0.6rem 2.5rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+        .header-brand { display:flex; align-items:center; gap:14px; }
+        .header-logo { width:44px; height:44px; border-radius:50%; object-fit:contain; flex-shrink:0; }
+        .header-brand-text h1 { font-family:var(--font-display); font-size:1rem; font-weight:400; color:var(--off-white); letter-spacing:0.3px; line-height:1.3; }
+        .header-brand-text span { font-size:0.65rem; color:var(--text-muted); letter-spacing:1.5px; text-transform:uppercase; }
+        .logout-btn { display:flex; align-items:center; gap:8px; padding:10px 20px; background:rgba(109,33,60,0.2); border:1px solid var(--border-subtle); border-radius:var(--radius-full); color:var(--text-secondary); font-size:0.82rem; font-family:var(--font-primary); cursor:pointer; transition:all 0.3s ease; letter-spacing:0.5px; }
+        .logout-btn:hover { background:rgba(109,33,60,0.4); border-color:var(--border-active); color:var(--off-white); }
+        .logout-btn svg { width:16px; height:16px; }
+
+        /* Conteúdo claro */
+        .client-content { width:100%; max-width:450px; margin:0 auto; padding:20px 15px 40px; animation:fadeInSlide 0.6s ease-out; }
+
+        .postit-aviso { background-color:var(--yellow-postit); border-left:6px solid var(--yellow-border); border-radius:12px; padding:16px; margin-bottom:20px; display:none; animation:softPulse 2s infinite ease-in-out; }
+        .postit-title { font-weight:bold; color:#8a6d1c; margin:0 0 6px 0; font-size:13px; text-transform:uppercase; }
+        .postit-text { margin:0; font-size:14px; color:#444; }
+
+        .welcome-container { display:flex; align-items:center; gap:16px; margin-bottom:20px; background:rgba(255,255,255,0.8); padding:15px; border-radius:16px; border:1px solid rgba(0,0,0,0.05); color:var(--text-dark); }
+        .avatar-profissional { width:75px; height:75px; object-fit:contain; border-radius:50%; }
+        .welcome { font-size:20px; font-weight:700; color:var(--primary-color); }
+
+        .card { background:var(--card-bg); border-radius:16px; padding:20px; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.05); }
+        .card-title { color:var(--primary-color); font-size:18px; font-weight:700; margin:0 0 15px 0; text-transform:uppercase; border-bottom:2px solid var(--accent-gold); display:inline-block; padding-bottom:3px; }
+
+        .metric-box { background:var(--rose-bg); border-left:4px solid var(--primary-color); border-radius:10px; padding:12px; margin-bottom:10px; }
+        .metric-label { font-size:11px; color:#7a525b; font-weight:600; text-transform:uppercase; }
+        .metric-value { font-size:20px; font-weight:700; color:var(--primary-color); margin-top:4px; }
+
+        .btn { display:block; background-color:var(--primary-color); color:white; text-align:center; padding:12px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:14px; border:none; cursor:pointer; transition:0.2s; }
+        .btn:hover { background-color:#521422; }
+
+        .secao-titulo-escura { margin:25px 0 15px 5px; color:var(--primary-color); font-size:16px; font-weight:700; text-transform:uppercase; }
+        .img-button-link { display:block; margin:12px auto 0 auto; width:100%; max-width:280px; }
+        .img-btn-file { width:100%; height:auto; display:block; border-radius:50px; }
+
+        /* === RESPONSIVO === */
+        @media(max-width:768px){
+            .client-header{padding:0.5rem 1rem}
+            .client-content{padding:15px 10px 30px}
+            .header-brand-text h1{font-size:0.85rem}
+            .logout-btn span{display:none}
+            .header-logo{width:36px;height:36px}
+            .login-logo{width:90px;height:90px}
+            .login-card{padding:2rem 1.5rem}
+        }
     </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
 </head>
 <body>
 
-<div class="container">
-    <div class="header"><img src="logo.jpg" class="logo-marca" alt="Logo"></div>
-
-    <div id="tela-login" class="card">
-        <h3 class="card-title" style="border:none;">Área Restrita</h3>
-        <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Digite os 4 primeiros números do seu CPF (OBS:<strong> SEM ZEROS E PONTOS!</strong> ao digitar a senha aperte no botão <strong>'ACESSAR'</strong>.
-):</p>
-        <input type="password" id="input-cpf" class="login-input" maxlength="4" placeholder="0000" inputmode="numeric">
-        <button onclick="verificarAcesso()" class="btn" style="width:100%;">ACESSAR</button>
-        <div id="msg-erro" class="error-message">Acesso não localizado.</div>
+<!-- ================================================================
+     TELA DE LOGIN (estilo Portal GR)
+     ================================================================ -->
+<div id="login-screen">
+    <div class="login-container">
+        <div class="login-card">
+            <img class="login-logo" src="logo2.png" alt="GR Serviços Extrajudiciais e Registro de Marcas" />
+            <h2 class="login-title">GR Serviços Extrajudiciais</h2>
+            <p class="login-subtitle">Portal do Cliente</p>
+            <form class="login-form" id="login-form" autocomplete="off">
+                <div class="input-group">
+                    <input type="password" id="cpf-input" placeholder="Digite os 4 primeiros números do CPF" maxlength="4" inputmode="numeric" autofocus aria-label="CPF de acesso" />
+                    <button type="button" class="toggle-password" id="toggle-password" aria-label="Mostrar CPF">
+                        <svg id="eye-open" viewBox="0 0 24 24" style="display:none"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/></svg>
+                        <svg id="eye-closed" viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46A11.8 11.8 0 001 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" fill="currentColor"/></svg>
+                    </button>
+                </div>
+                <button type="submit" class="login-btn">Entrar</button>
+                <div class="login-error" id="login-error">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/></svg>
+                    <span>Acesso não localizado. Verifique os números do CPF.</span>
+                </div>
+                <p class="login-hint">Se o CPF começar com 0, não precisa digitar o zero.</p>
+            </form>
+        </div>
     </div>
+</div>
 
-    <div id="painel-cliente" style="display:none;">
+<!-- ================================================================
+     PAINEL DO CLIENTE (tema claro original)
+     ================================================================ -->
+<div id="painel-cliente">
+    <header class="client-header">
+        <div class="header-brand">
+            <img class="header-logo" src="logo2.png" alt="GR" />
+            <div class="header-brand-text">
+                <h1>GR Serviços Extrajudiciais & Registro de Marcas</h1>
+                <span>Portal do Cliente</span>
+            </div>
+        </div>
+        <button class="logout-btn" id="logout-btn">
+            <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" fill="currentColor"/></svg>
+            <span>Sair</span>
+        </button>
+    </header>
+
+    <div class="client-content">
         <div id="postit-container" class="postit-aviso">
             <p class="postit-title">📌 Recado Importante</p>
             <p id="txt-aviso" class="postit-text"></p>
@@ -95,7 +206,7 @@
         </div>
 
         <h3 class="secao-titulo-escura">Guias e Pagamentos</h3>
-        
+
         <div class="card">
             <strong style="color:var(--primary-color); font-size: 15px;">Guia DAS</strong>
             <p style="font-size: 11px; color: #666; margin: 5px 0 10px 0;">Emita e pague sua GUIA DAS do mês.</p>
@@ -123,24 +234,76 @@
         "3002": { nome: "Josefa Macedo dos Santos", comp: "junho/2026", fat: "R$ 5.230,00", ac: "R$ 21.580,30", ut: "26,64%", rel: "https://drive.google.com/file/d/1yUZgNRFk27erkvhcOrx5MeckuPgqQbm0/view?usp=drive_link", das: "https://drive.google.com/file/d/1I-Y09mOMaqWn1gXQFhNHf072gkDjLjmD/view?usp=drive_link", out: "https://drive.google.com/drive/folders/1l2CgQzVQbqcISh2ANcKKvUAgOFjozdAW?usp=drive_link", av: "NÃO", txt: "" }
     };
 
-    function verificarAcesso() {
-        let s = document.getElementById('input-cpf').value.trim().replace(/^0+/, '');
-        
+    const loginScreen    = document.getElementById('login-screen');
+    const painelCliente  = document.getElementById('painel-cliente');
+    const loginForm      = document.getElementById('login-form');
+    const cpfInput       = document.getElementById('cpf-input');
+    const loginError     = document.getElementById('login-error');
+    const togglePassword = document.getElementById('toggle-password');
+    const eyeOpen        = document.getElementById('eye-open');
+    const eyeClosed      = document.getElementById('eye-closed');
+    const logoutBtn      = document.getElementById('logout-btn');
+
+    /* Toggle visibilidade do CPF */
+    togglePassword.addEventListener('click', () => {
+        const isPassword = cpfInput.type === 'password';
+        cpfInput.type = isPassword ? 'text' : 'password';
+        eyeOpen.style.display   = isPassword ? 'block' : 'none';
+        eyeClosed.style.display = isPassword ? 'none'  : 'block';
+    });
+
+    /* Login */
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const s = cpfInput.value.trim().replace(/^0+/, '');
         if (bancoClientes[s]) {
-            const d = bancoClientes[s];
-            document.getElementById('txt-nome').innerText = d.nome;
-            document.getElementById('txt-competencia').innerText = "Competência: " + d.comp;
-            document.getElementById('txt-faturamento').innerText = d.fat;
-            document.getElementById('txt-acumulado').innerText = d.ac;
-            document.getElementById('txt-utilizado').innerText = d.ut;
-            document.getElementById('lnk-relatorio').href = d.rel;
-            document.getElementById('lnk-das').href = d.das;
-            document.getElementById('lnk-outros').href = d.out;
-            if (d.av === "SIM") { document.getElementById('txt-aviso').innerText = d.txt; document.getElementById('postit-container').style.display = 'block'; }
-            document.getElementById('tela-login').style.display = 'none';
-            document.getElementById('painel-cliente').style.display = 'block';
-        } else { document.getElementById('msg-erro').style.display = 'block'; }
+            sessionStorage.setItem('clienteCPF', s);
+            mostrarPainel(s);
+        } else {
+            loginError.classList.add('visible');
+            cpfInput.value = '';
+            cpfInput.focus();
+            setTimeout(() => loginError.classList.remove('visible'), 3000);
+        }
+    });
+
+    /* Mostrar painel do cliente */
+    function mostrarPainel(s) {
+        const d = bancoClientes[s];
+        document.getElementById('txt-nome').innerText = d.nome;
+        document.getElementById('txt-competencia').innerText = "Competência: " + d.comp;
+        document.getElementById('txt-faturamento').innerText = d.fat;
+        document.getElementById('txt-acumulado').innerText = d.ac;
+        document.getElementById('txt-utilizado').innerText = d.ut;
+        document.getElementById('lnk-relatorio').href = d.rel;
+        document.getElementById('lnk-das').href = d.das;
+        document.getElementById('lnk-outros').href = d.out;
+        if (d.av === "SIM") { document.getElementById('txt-aviso').innerText = d.txt; document.getElementById('postit-container').style.display = 'block'; }
+        loginScreen.classList.add('hidden');
+        painelCliente.classList.add('visible');
     }
+
+    /* Logout */
+    logoutBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('clienteCPF');
+        painelCliente.classList.remove('visible');
+        loginScreen.classList.remove('hidden');
+        cpfInput.value = '';
+        loginError.classList.remove('visible');
+        document.getElementById('postit-container').style.display = 'none';
+        cpfInput.focus();
+    });
+
+    /* Sessão persistente */
+    (function verificarSessao() {
+        const s = sessionStorage.getItem('clienteCPF');
+        if (s && bancoClientes[s]) { mostrarPainel(s); }
+    })();
+
+    /* Atalho ESC para sair */
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && painelCliente.classList.contains('visible')) logoutBtn.click();
+    });
 </script>
 </body>
 </html>
