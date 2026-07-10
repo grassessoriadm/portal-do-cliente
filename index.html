@@ -106,47 +106,56 @@
         }
 
         /* ================================================================
-           BANNER "ADICIONAR À TELA INICIAL" (MOBILE)
+           BANNER "ADICIONAR À TELA INICIAL" (MOBILE - TOP COMPACTO)
            ================================================================ */
         .install-banner {
             display: none;
             position: fixed;
-            left: 12px;
-            right: 12px;
-            bottom: 84px;
+            left: 0;
+            right: 0;
+            top: 0;
             z-index: 998;
-            background: linear-gradient(145deg, var(--bg-card), var(--marsala-dark));
-            border: 1px solid var(--border-active);
-            border-radius: var(--radius-md);
-            padding: 16px 18px;
-            box-shadow: 0 12px 35px rgba(0,0,0,0.4);
-            animation: fadeInSlide 0.5s ease;
+            background: linear-gradient(90deg, var(--marsala-dark), var(--marsala));
+            border-bottom: 1px solid var(--border-active);
+            padding: 8px 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.35);
         }
-        .install-banner.show { display: flex; align-items: flex-start; gap: 12px; }
-        .install-banner .ib-icon { font-size: 1.8rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
-        .install-banner .ib-content { flex: 1; }
-        .install-banner .ib-title { font-size: 0.9rem; font-weight: 600; color: var(--off-white); margin-bottom: 6px; }
-        .install-banner .ib-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
-        .install-banner .ib-text strong { color: var(--burned-rose-light); }
+        .install-banner .ib-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .install-banner .ib-icon { font-size: 1rem; flex-shrink: 0; line-height: 1; }
+        .install-banner .ib-content { flex: 1; text-align: center; line-height: 1.3; }
+        .install-banner .ib-text { font-size: 0.72rem; color: var(--off-white-dim); }
+        .install-banner .ib-text strong { color: var(--burned-rose-light); font-weight: 600; }
         .install-banner .ib-close {
             flex-shrink: 0;
-            background: rgba(179,107,122,0.2);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            width: 26px; height: 26px;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: var(--off-white);
+            width: 28px; height: 28px;
+            min-width: 28px;
             border-radius: 50%;
-            font-size: 1rem;
+            font-size: 0.9rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: background 0.3s ease;
             line-height: 1;
+            -webkit-tap-highlight-color: transparent;
         }
-        .install-banner .ib-close:hover { background: rgba(179,107,122,0.4); color: var(--off-white); }
+        .install-banner .ib-close:hover, .install-banner .ib-close:active { background: rgba(255,255,255,0.35); }
+        .install-banner.closing { animation: bannerFadeOut 0.3s ease forwards; }
+        @keyframes bannerSlideDown { from{opacity:0;transform:translateY(-100%)} to{opacity:1;transform:translateY(0)} }
+        @keyframes bannerFadeOut { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(-100%)} }
+        .install-banner.show-banner { display: block; animation: bannerSlideDown 0.4s ease; }
 
         @media (max-width:768px) {
-            .install-banner { display: flex; }
             .btn-faturamento { font-size: 0.76rem; padding: 12px 18px; right: 15px; bottom: 15px; }
         }
 
@@ -240,14 +249,13 @@
      BANNER "ADICIONAR À TELA INICIAL" (MOBILE)
      ================================================================ -->
 <div class="install-banner" id="install-banner">
-    <div class="ib-icon">📱</div>
-    <div class="ib-content">
-        <div class="ib-title">Adicione nosso site à sua tela inicial!</div>
-        <div class="ib-text">
-            Toque no menu <strong>(⋮)</strong> no canto superior do navegador → selecione <strong>"Adicionar à tela inicial"</strong> e acesse com 1 toque sempre que quiser!
+    <div class="ib-inner">
+        <div class="ib-icon">📱</div>
+        <div class="ib-content">
+            <div class="ib-text">Toque em <strong>(⋮)</strong> e escolha <strong>"Adicionar à tela inicial"</strong> para acessar com 1 toque!</div>
         </div>
+        <button class="ib-close" id="ib-close" aria-label="Fechar">✕</button>
     </div>
-    <button class="ib-close" id="ib-close" aria-label="Fechar">✕</button>
 </div>
 
 <!-- ================================================================
@@ -354,7 +362,7 @@
         <a href="https://wa.me/message/2IBHQ3HDJNBLC1" target="_blank" class="img-button-link"><img src="botton2.jpg" class="img-btn-file"></a>
     </div>
 </div>
-
+                                     /* Alterações Recorrentes do Bancos de Dados daqui */
 <script>
     const bancoClientes = {
     "1721": { nome: "Alisson Elias de Souza", comp: "Faturamento JUNHO (Total)", fat: "R$ 3.190,00", ac: "R$ 25.006,00", ut: "30,87%", rel: "https://drive.google.com/file/d/19XZ4IKVkwrGLAmumDBXJ0mWP2u9m_7nm/view?usp=sharing", das: "https://drive.google.com/file/d/1KDDxBvZE5whtfCSHmEK7B_Vlrx7T6mHO/view?usp=drive_link", out: "", av: "SIM", txt: "✅ Sem pagamento em julho ; ✅ Vencimento: 20/08/2026 ; ✅ Benefício cadastrado incorreto ; ✅ Dados do benefício divergentes." },
@@ -369,7 +377,7 @@
 
     "3002": { nome: "Josefa Macedo dos Santos", comp: "junho/2026", fat: "R$ 5.230,00", ac: "R$ 21.580,30", ut: "26,64%", rel: "https://drive.google.com/file/d/1yUZgNRFk27erkvhcOrx5MeckuPgqQbm0/view?usp=drive_link", das: "https://drive.google.com/file/d/1I-Y09mOMaqWn1gXQFhNHf072gkDjLjmD/view?usp=drive_link", out: "https://drive.google.com/drive/folders/1l2CgQzVQbqcISh2ANcKKvUAgOFjozdAW?usp=drive_link", av: "NÃO", txt: "" }
 };
-
+/* Alterações Recorrentes do Bancos de Dados daqui */
     const loginScreen    = document.getElementById('login-screen');
     const painelCliente  = document.getElementById('painel-cliente');
     const loginForm      = document.getElementById('login-form');
@@ -449,17 +457,55 @@
     const installBanner = document.getElementById('install-banner');
     const ibClose = document.getElementById('ib-close');
 
-    /* Mostra o banner após 2.5s (apenas mobile via CSS media query) */
-    setTimeout(() => {
-        if (!localStorage.getItem('grInstallBannerClosed')) {
-            installBanner.classList.add('show');
+    /* Detecta se é mobile */
+    function isMobile() {
+        return window.matchMedia('(max-width: 768px)').matches;
+    }
+
+    /* Mostra o banner */
+    function mostrarBanner() {
+        if (installBanner && !localStorage.getItem('grInstallBannerClosed')) {
+            installBanner.style.display = 'block';
+            installBanner.classList.add('show-banner');
         }
+    }
+
+    /* Fecha o banner com animação de fade-out */
+    function fecharBanner() {
+        if (!installBanner) return;
+        installBanner.classList.add('closing');
+        installBanner.classList.remove('show-banner');
+        setTimeout(() => {
+            installBanner.style.display = 'none';
+            installBanner.classList.remove('closing');
+        }, 300);
+        localStorage.setItem('grInstallBannerClosed', 'true');
+    }
+
+    /* Inicia após 2.5s (só mobile) */
+    setTimeout(() => {
+        if (isMobile()) mostrarBanner();
     }, 2500);
 
-    /* Fechar banner e salvar preferência */
-    ibClose.addEventListener('click', () => {
-        installBanner.classList.remove('show');
-        localStorage.setItem('grInstallBannerClosed', 'true');
+    /* Fechar banner - captura click E touch para garantir no mobile */
+    if (ibClose) {
+        ibClose.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            fecharBanner();
+        });
+        ibClose.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            fecharBanner();
+        });
+    }
+
+    /* Se redimensionar para mobile depois, mostra o banner */
+    window.addEventListener('resize', () => {
+        if (isMobile() && !localStorage.getItem('grInstallBannerClosed') && installBanner.style.display !== 'block') {
+            mostrarBanner();
+        }
     });
 </script>
 </body>
