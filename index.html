@@ -32,7 +32,7 @@
         }
 
         html { font-size:16px; scroll-behavior:smooth; }
-        body { font-family:var(--font-primary); background-color:var(--bg-dark); color:var(--text-primary); min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+        body { font-family:var(--font-primary); background-color:var(--bg-dark); color:var(--text-primary); min-height:100vh; overflow-x:hidden; -webkit-fontoothing:antialiased; }
 
         /* === ANIMAÇÕES === */
         @keyframes fadeInSlide { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
@@ -230,6 +230,189 @@
         .img-button-link { display:block; margin:12px auto 0 auto; width:100%; max-width:280px; }
         .img-btn-file { width:100%; height:auto; display:block; border-radius:50px; }
 
+        /* ================================================================
+           SISTEMA DE AVISOS MODAL — CSS ISOLADO (GR-Aviso)
+           Todas as classes usam prefixo "gr-aviso-" para não conflitar
+           ================================================================ */
+        .gr-aviso-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 5, 8, 0.75);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .gr-aviso-overlay.gr-aviso-visible {
+            display: flex;
+            opacity: 1;
+        }
+        .gr-aviso-card {
+            background: linear-gradient(145deg, var(--bg-card), var(--marsala-dark));
+            border: 1px solid var(--border-active);
+            border-radius: var(--radius-lg);
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 100px var(--shadow-glow);
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.92) translateY(20px);
+            opacity: 0;
+            transition: transform 0.45s cubic-bezier(0.34,1.4,0.64,1), opacity 0.4s ease;
+        }
+        .gr-aviso-overlay.gr-aviso-visible .gr-aviso-card {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+        .gr-aviso-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--burned-rose), var(--marsala-light), var(--burned-rose), transparent);
+        }
+        .gr-aviso-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(179,107,122,0.12), transparent 60%);
+            pointer-events: none;
+        }
+        .gr-aviso-header {
+            text-align: center;
+            padding: 2.2rem 2rem 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        .gr-aviso-icon-circle {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--marsala), var(--marsala-light));
+            box-shadow: 0 8px 24px rgba(109,33,60,0.5);
+            animation: softPulse 2.5s infinite ease-in-out;
+        }
+        .gr-aviso-icon-circle.gr-aviso-tipo-urgente {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            box-shadow: 0 8px 24px rgba(192,57,43,0.5);
+        }
+        .gr-aviso-icon-circle.gr-aviso-tipo-atencao {
+            background: linear-gradient(135deg, #d4860a, #f0a830);
+            box-shadow: 0 8px 24px rgba(212,134,10,0.5);
+        }
+        .gr-aviso-icon-circle.gr-aviso-tipo-sucesso {
+            background: linear-gradient(135deg, #1e7d34, #27ae60);
+            box-shadow: 0 8px 24px rgba(30,125,52,0.5);
+        }
+        .gr-aviso-title {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: var(--off-white);
+            letter-spacing: 0.3px;
+            margin-bottom: 0.3rem;
+        }
+        .gr-aviso-subtitle {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .gr-aviso-body {
+            padding: 0.5rem 2rem 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .gr-aviso-message {
+            font-size: 0.95rem;
+            line-height: 1.65;
+            color: var(--off-white-dim);
+            text-align: center;
+            white-space: pre-line;
+        }
+        .gr-aviso-footer {
+            padding: 0 2rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .gr-aviso-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--marsala), var(--marsala-light));
+            border: none;
+            border-radius: var(--radius-full);
+            color: var(--off-white);
+            font-size: 0.95rem;
+            font-family: var(--font-primary);
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.35s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .gr-aviso-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+            transition: left 0.5s ease;
+        }
+        .gr-aviso-btn:hover::before { left: 100%; }
+        .gr-aviso-btn:hover {
+            background: linear-gradient(135deg, var(--marsala-light), var(--burned-rose-dark));
+            box-shadow: 0 8px 30px rgba(109,33,60,0.5);
+            transform: translateY(-1px);
+        }
+        .gr-aviso-btn:active { transform: translateY(0); }
+        .gr-aviso-pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 1.2rem;
+        }
+        .gr-aviso-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border-subtle);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .gr-aviso-dot.gr-aviso-dot-active {
+            background: var(--burned-rose);
+            width: 24px;
+            border-radius: var(--radius-full);
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .gr-aviso-card { max-width: 92%; }
+            .gr-aviso-header { padding: 1.8rem 1.5rem 0.8rem; }
+            .gr-aviso-body { padding: 0.5rem 1.5rem 1.2rem; }
+            .gr-aviso-footer { padding: 0 1.5rem 1.5rem; }
+            .gr-aviso-icon-circle { width: 60px; height: 60px; font-size: 1.6rem; }
+            .gr-aviso-title { font-size: 1.15rem; }
+            .gr-aviso-message { font-size: 0.88rem; }
+            .gr-aviso-btn { padding: 13px; font-size: 0.85rem; }
+        }
+
         /* === RESPONSIVO === */
         @media(max-width:768px){
             .client-header{padding:0.5rem 1rem}
@@ -362,6 +545,31 @@
         <a href="https://wa.me/message/2IBHQ3HDJNBLC1" target="_blank" class="img-button-link"><img src="botton2.jpg" class="img-btn-file"></a>
     </div>
 </div>
+
+<!-- ================================================================
+     SISTEMA DE AVISOS MODAL — HTML ISOLADO (GR-Aviso)
+     ================================================================ -->
+<div class="gr-aviso-overlay" id="gr-aviso-overlay">
+    <div class="gr-aviso-card" id="gr-aviso-card">
+        <div class="gr-aviso-header">
+            <div class="gr-aviso-icon-circle" id="gr-aviso-icon">📌</div>
+            <h2 class="gr-aviso-title" id="gr-aviso-title">Aviso</h2>
+            <p class="gr-aviso-subtitle" id="gr-aviso-subtitle">Portal do Cliente</p>
+        </div>
+        <div class="gr-aviso-body">
+            <p class="gr-aviso-message" id="gr-aviso-message"></p>
+        </div>
+        <div class="gr-aviso-footer">
+            <div class="gr-aviso-pagination" id="gr-aviso-pagination"></div>
+            <button class="gr-aviso-btn" id="gr-aviso-btn">Entendi</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================
+     BIBLIOTECA SUPABASE (CDN) — para buscar avisos individuais
+     ================================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
        
 <script>
     
@@ -372,15 +580,154 @@
 
     "4490": { nome: "Marco Antonio da Silva Oliveira", comp: "Faturamento Outubro/2026", fat: "R$ 0,00", ac: "R$ 0,00", ut: "0,00%", rel: "https://drive.google.com/drive/folders/1gqY3yo-0C1srhsyyIWtonXQh7OyQbGK7?usp=drive_link", das: "https://drive.google.com/drive/folders/1oUxNUjI6UzS-KEBfqwd__gVB5SoMq0Qd?usp=drive_link", out: "https://drive.google.com/drive/folders/1Ismp-bt8Yy-0rmRJi4fpz42izyLHHx5v?usp=drive_link", av: "SIM", txt: "🟠Guia DAS Abril/2025\nValor: R$ 111,86\nSerá enviada em: 29/10/2026" },
 
-    "2834": { nome: "Givanilda Maria de Lemos", comp: "Faturamento Setembro(Total)", fat: "R$ 4.400,32", ac: "R$ 36.764,22", ut: "45.4%", rel: "https://drive.google.com/drive/folders/1ob2jBo5c_UpwOaWBuhg2SklGxoNPpO7s?usp=drive_link", das: "https://drive.google.com/drive/folders/1Yw9ObYzviy8D_jNe64DtrIoYh7KFoLCa?usp=drive_link", out: "https://drive.google.com/drive/folders/1j0qmIbFMC-bso7IK440FzaTS1PoJHdVG?usp=drive_link", av: "SIM", txt: " INFORMAÇÃO IMPORTANTE: LEIA O RELATÓRIO!" },
+    "2834": { nome: "Givanilda Maria de Lemos", comp: "Faturamento Setembro(Total)", fat: "R$ 4.400,32", ac: "R$ 36.764,22", ut: "45.4%", rel: "https://drive.google.com/drive/folders/1ob2jBo5c_UpwOaWBuhg2SklGxoNPpO7s?usp=drive_link", das: "https://drive.google.com/drive/folders/1Yw9ObYzviy8D_jNe64DtrIoYh7KFoLCa?usp=drive_link", out: "https://drive.google.com/drive/folders/1j0qmIbFMC-bso7IK440FzaTS1PoJHdVG?usp=drive_link", av: "SIM", txt: "Atenção! Leia o Relatório." },
 
     "1626": { nome: "Gabrielle Macedo dos Santos Rocha", comp: "junho/2026", fat: "R$ 5.230,00", ac: "R$ 21.580,30", ut: "26,64%", rel: "https://drive.google.com/file/d/1yUZgNRFk27erkvhcOrx5MeckuPgqQbm0/view?usp=drive_link", das: "https://drive.google.com/file/d/1I-Y09mOMaqWn1gXQFhNHf072gkDjLjmD/view?usp=drive_link", out: "https://drive.google.com/drive/folders/1l2CgQzVQbqcISh2ANcKKvUAgOFjozdAW?usp=drive_link", av: "SIM", txt: "Pagar a guia DAS no mês vigente." },
 
     "3002": { nome: "Josefa Macedo dos Santos", comp: "junho/2026", fat: "R$ 5.230,00", ac: "R$ 21.580,30", ut: "26,64%", rel: "https://drive.google.com/file/d/1yUZgNRFk27erkvhcOrx5MeckuPgqQbm0/view?usp=drive_link", das: "https://drive.google.com/file/d/1I-Y09mOMaqWn1gXQFhNHf072gkDjLjmD/view?usp=drive_link", out: "https://drive.google.com/drive/folders/1l2CgQzVQbqcISh2ANcKKvUAgOFjozdAW?usp=drive_link", av: "NÃO", txt: "" }
 };
 
-    
-/* Alterações Recorrentes do Bancos de Dados daqui */
+    /* ============================================================
+       SISTEMA DE AVISOS INDIVIDUAIS (GR-Aviso)
+       ============================================================
+       Busca avisos do banco de dados Supabase destinados
+       especificamente ao cliente que acabou de fazer login.
+
+       Cada aviso tem:
+         - cliente_id: identifica qual cliente recebe o aviso
+         - titulo: título exibido no modal
+         - mensagem: corpo da mensagem
+         - tipo: info, urgente, atencao, sucesso (muda cor/ícone)
+         - ativo: se false, não aparece
+         - visualizado: se true, já foi lido pelo cliente
+         - modo_exibicao: controla comportamento de repetição
+           'ate_confirmar'   = mostra até clicar Entendi (padrão)
+           'uma_vez'         = mostra só uma vez e marca visualizado
+           'sempre_pendente' = mostra enquanto ativo e não visualizado
+       ============================================================ */
+    const GR_SUPABASE_URL = 'https://zmnjqicsejcyvntxqyql.supabase.co';
+    const GR_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InptbmpxaWNzZWpjeXZudHhxeXFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5OTI5MzIsImV4cCI6MjEwNzU2ODkzMn0.GZsgbms7JYhrh0l3x2x5A8VxKMDbY57idclXbgf6hBo';
+    let _supabaseClient = null;
+
+    function getSupabase() {
+        if (!_supabaseClient && window.supabase) {
+            _supabaseClient = window.supabase.createClient(GR_SUPABASE_URL, GR_SUPABASE_KEY);
+        }
+        return _supabaseClient;
+    }
+
+    const grAvisoSystem = (function() {
+        let overlay, card, iconEl, titleEl, subtitleEl, messageEl, btnEl, paginationEl;
+        let avisosAtivos = [];
+        let indiceAtual = 0;
+
+        function init() {
+            overlay = document.getElementById('gr-aviso-overlay');
+            card = document.getElementById('gr-aviso-card');
+            iconEl = document.getElementById('gr-aviso-icon');
+            titleEl = document.getElementById('gr-aviso-title');
+            subtitleEl = document.getElementById('gr-aviso-subtitle');
+            messageEl = document.getElementById('gr-aviso-message');
+            btnEl = document.getElementById('gr-aviso-btn');
+            paginationEl = document.getElementById('gr-aviso-pagination');
+
+            btnEl.addEventListener('click', avancarOuFechar);
+        }
+
+        function deveMostrar(aviso) {
+            if (!aviso.ativo) return false;
+            if (aviso.modo_exibicao === 'uma_vez') return !aviso.visualizado;
+            if (aviso.modo_exibicao === 'sempre_pendente') return !aviso.visualizado;
+            return true;
+        }
+
+        async function marcarVisto(aviso) {
+            const sb = getSupabase();
+            if (!sb || !aviso.id) return;
+            try {
+                await sb.from('avisos').update({
+                    visualizado: true,
+                    visualizado_em: new Date().toISOString()
+                }).eq('id', aviso.id);
+            } catch(e) {}
+        }
+
+        function getIconePorTipo(tipo) {
+            var icones = { info: '📌', urgente: '⚠️', atencao: '🟠', sucesso: '✅' };
+            return icones[tipo] || '📌';
+        }
+
+        function getClasseTipo(tipo) {
+            var classes = { info: '', urgente: 'gr-aviso-tipo-urgente', atencao: 'gr-aviso-tipo-atencao', sucesso: 'gr-aviso-tipo-sucesso' };
+            return classes[tipo] || '';
+        }
+
+        function renderPagination() {
+            if (avisosAtivos.length <= 1) { paginationEl.innerHTML = ''; return; }
+            paginationEl.innerHTML = '';
+            for (var i = 0; i < avisosAtivos.length; i++) {
+                (function(i) {
+                    var dot = document.createElement('button');
+                    dot.className = 'gr-aviso-dot' + (i === indiceAtual ? ' gr-aviso-dot-active' : '');
+                    dot.setAttribute('aria-label', 'Aviso ' + (i + 1));
+                    dot.addEventListener('click', function() { mostrarAviso(i); });
+                    paginationEl.appendChild(dot);
+                })(i);
+            }
+        }
+
+        function mostrarAviso(idx) {
+            indiceAtual = idx;
+            var a = avisosAtivos[idx];
+            iconEl.textContent = getIconePorTipo(a.tipo);
+            iconEl.className = 'gr-aviso-icon-circle ' + getClasseTipo(a.tipo);
+            titleEl.textContent = a.titulo || 'Aviso';
+            subtitleEl.textContent = 'Portal do Cliente';
+            messageEl.textContent = a.mensagem || '';
+            if (idx === avisosAtivos.length - 1) {
+                btnEl.textContent = 'Entendi';
+            } else {
+                btnEl.textContent = 'Próximo';
+            }
+            renderPagination();
+        }
+
+        function avancarOuFechar() {
+            marcarVisto(avisosAtivos[indiceAtual]);
+            if (indiceAtual < avisosAtivos.length - 1) {
+                mostrarAviso(indiceAtual + 1);
+            } else {
+                fechar();
+            }
+        }
+
+        async function mostrar(clienteId) {
+            const sb = getSupabase();
+            if (!sb) return;
+            try {
+                const { data, error } = await sb.from('avisos')
+                    .select('*')
+                    .eq('cliente_id', clienteId)
+                    .order('created_at', { ascending: true });
+                if (error || !data || data.length === 0) return;
+                avisosAtivos = data.filter(deveMostrar);
+                if (avisosAtivos.length === 0) return;
+                indiceAtual = 0;
+                mostrarAviso(0);
+                overlay.classList.add('gr-aviso-visible');
+                document.body.style.overflow = 'hidden';
+            } catch(e) {}
+        }
+
+        function fechar() {
+            overlay.classList.remove('gr-aviso-visible');
+            document.body.style.overflow = '';
+        }
+
+        return { init: init, mostrar: mostrar };
+    })();
+
+    /* Alterações Recorrentes do Bancos de Dados daqui */
     const loginScreen    = document.getElementById('login-screen');
     const painelCliente  = document.getElementById('painel-cliente');
     const loginForm      = document.getElementById('login-form');
@@ -429,6 +776,9 @@
         loginScreen.classList.add('hidden');
         painelCliente.classList.add('visible');
         document.getElementById('btn-faturamento').classList.add('show');
+
+        /* === BUSCAR E MOSTRAR AVISOS INDIVIDUAIS DO BANCO === */
+        grAvisoSystem.mostrar(s);
     }
 
     /* Logout */
@@ -510,6 +860,11 @@
             mostrarBanner();
         }
     });
+
+    /* ============================================================
+       INICIALIZAÇÃO DO SISTEMA DE AVISOS
+       ============================================================ */
+    grAvisoSystem.init();
 </script>
 </body>
 </html>
