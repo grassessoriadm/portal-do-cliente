@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Avisos | GR Assessoria</title>
+    <title>Painel Administrativo | GR Assessoria</title>
     <link rel="icon" href="logo2.png" type="image/png">
     <style>
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -82,10 +82,23 @@
         }
         .admin-logout:hover { background:rgba(109,33,60,0.4); color:var(--off-white); }
 
+        /* TABS DE NAVEGAÇÃO */
+        .admin-tabs {
+            display:flex; gap:0.5rem; padding:1rem 2rem 0; max-width:900px; margin:0 auto;
+            border-bottom:1px solid var(--border-subtle);
+        }
+        .admin-tab {
+            padding:10px 20px; background:transparent; border:none; border-bottom:2px solid transparent;
+            color:var(--text-muted); font-size:0.85rem; font-weight:600; cursor:pointer;
+            transition:all 0.3s ease; font-family:var(--font-primary); margin-bottom:-1px;
+        }
+        .admin-tab:hover { color:var(--text-secondary); }
+        .admin-tab.active { color:var(--off-white); border-bottom-color:var(--marsala-light); }
+
         .admin-content { max-width:900px; margin:0 auto; padding:2rem 1rem 3rem; animation:fadeIn 0.5s ease; }
         .admin-section-title { font-family:var(--font-display); font-size:1.3rem; color:var(--off-white); margin-bottom:1.5rem; }
 
-        /* FORM DE AVISO */
+        /* FORM CARD */
         .admin-form-card {
             background:var(--bg-card); border:1px solid var(--border-subtle);
             border-radius:var(--radius-md); padding:1.5rem; margin-bottom:1.5rem;
@@ -116,13 +129,13 @@
         .admin-btn-danger { background:rgba(231,76,60,0.15); color:#e88; border:1px solid rgba(231,76,60,0.3); }
         .admin-btn-danger:hover { background:rgba(231,76,60,0.3); }
 
-        /* LISTA DE AVISOS */
-        .admin-aviso-item {
+        /* LISTA DE ITENS */
+        .admin-aviso-item, .admin-cliente-item {
             background:var(--bg-card); border:1px solid var(--border-subtle);
             border-radius:var(--radius-md); padding:1.2rem; margin-bottom:0.8rem;
             transition:all 0.3s ease; animation:fadeIn 0.4s ease;
         }
-        .admin-aviso-item:hover { border-color:var(--border-active); background:var(--bg-card-hover); }
+        .admin-aviso-item:hover, .admin-cliente-item:hover { border-color:var(--border-active); background:var(--bg-card-hover); }
         .admin-aviso-item-header { display:flex; justify-content:space-between; align-items:start; gap:1rem; margin-bottom:0.5rem; flex-wrap:wrap; }
         .admin-aviso-item-title { font-size:1rem; color:var(--off-white); font-weight:600; }
         .admin-aviso-item-meta { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; }
@@ -157,14 +170,67 @@
         .admin-toggle input:checked + .admin-toggle-slider::before { transform:translateX(20px); background:var(--marsala-light); }
 
         .admin-filter-bar { display:flex; gap:0.8rem; margin-bottom:1.5rem; flex-wrap:wrap; align-items:center; }
-        .admin-filter-bar select { max-width:200px; }
+        .admin-filter-bar select, .admin-filter-bar input { max-width:240px; }
+        .admin-search {
+            flex:1; max-width:300px; padding:10px 14px; background:var(--bg-input);
+            border:1.5px solid var(--border-subtle); border-radius:var(--radius-sm);
+            color:var(--text-primary); font-size:0.85rem; outline:none; transition:all 0.3s ease;
+        }
+        .admin-search:focus { border-color:var(--burned-rose); }
+        .admin-search::placeholder { color:var(--text-muted); }
+
+        /* LISTA DE CLIENTES */
+        .admin-cliente-nome { font-size:1rem; color:var(--off-white); font-weight:600; margin-bottom:0.3rem; }
+        .admin-cliente-id { font-size:0.78rem; color:var(--text-muted); }
+        .admin-cliente-info { font-size:0.8rem; color:var(--text-secondary); margin-top:0.5rem; }
+        .admin-cliente-actions { margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap; }
+        .admin-cliente-actions button { padding:8px 18px; font-size:0.78rem; }
+
+        /* SUB-TABS DENTRO DO CLIENTE */
+        .admin-subtabs { display:flex; gap:0.4rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-subtle); }
+        .admin-subtab {
+            padding:8px 16px; background:transparent; border:none; border-bottom:2px solid transparent;
+            color:var(--text-muted); font-size:0.82rem; font-weight:600; cursor:pointer;
+            transition:all 0.3s ease; font-family:var(--font-primary); margin-bottom:-1px;
+        }
+        .admin-subtab:hover { color:var(--text-secondary); }
+        .admin-subtab.active { color:var(--off-white); border-bottom-color:var(--burned-rose); }
+
+        /* BREADCRUMB / VOLTAR */
+        .admin-breadcrumb { display:flex; align-items:center; gap:0.5rem; margin-bottom:1.5rem; }
+        .admin-breadcrumb button {
+            background:transparent; border:none; color:var(--text-secondary);
+            font-size:0.85rem; cursor:pointer; padding:4px 8px; border-radius:var(--radius-sm);
+            transition:all 0.3s ease; font-family:var(--font-primary);
+        }
+        .admin-breadcrumb button:hover { color:var(--off-white); background:rgba(255,255,255,0.05); }
+        .admin-breadcrumb-current { color:var(--off-white); font-weight:600; font-size:0.9rem; }
+        .admin-breadcrumb-sep { color:var(--text-muted); font-size:0.7rem; }
+
+        /* LINK FIELD */
+        .admin-link-field { display:flex; gap:0.5rem; align-items:center; }
+        .admin-link-field .admin-field { flex:1; }
+
+        /* SECTIONS VISIBILITY */
+        .admin-section { display:none; }
+        .admin-section.active { display:block; animation:fadeIn 0.4s ease; }
+
+        /* SAVE FEEDBACK */
+        .admin-save-feedback {
+            display:none; padding:12px 20px; border-radius:var(--radius-sm);
+            font-size:0.85rem; margin-bottom:1rem; animation:fadeIn 0.3s ease;
+        }
+        .admin-save-feedback.success { display:block; background:rgba(39,174,96,0.15); color:#2ecc71; border:1px solid rgba(39,174,96,0.3); }
+        .admin-save-feedback.error { display:block; background:rgba(231,76,60,0.15); color:#e88; border:1px solid rgba(231,76,60,0.3); }
 
         @media(max-width:768px){
             .admin-header{padding:0.5rem 1rem}
+            .admin-tabs{padding:0.5rem 1rem 0}
             .admin-content{padding:1rem 0.5rem 2rem}
             .admin-form-row{flex-direction:column}
             .admin-form-group{min-width:100%}
             .admin-login-card{padding:1.8rem 1.5rem}
+            .admin-search{max-width:100%}
         }
     </style>
 </head>
@@ -174,7 +240,7 @@
 <div id="admin-login">
     <div class="admin-login-card">
         <h2 class="admin-login-title">Painel Administrativo</h2>
-        <p class="admin-login-sub">GR Assessoria - Avisos</p>
+        <p class="admin-login-sub">GR Assessoria</p>
         <input type="password" class="admin-input" id="admin-senha" placeholder="Digite a senha de administração" autofocus>
         <button class="admin-btn" id="admin-login-btn">Entrar</button>
         <p class="admin-login-error" id="admin-login-error">Senha incorreta. Tente novamente.</p>
@@ -185,86 +251,255 @@
 <div id="admin-panel">
     <header class="admin-header">
         <div class="admin-header-brand">
-            <h1>Gerenciamento de Avisos</h1>
+            <h1>Painel Administrativo</h1>
             <span>GR Assessoria</span>
         </div>
         <button class="admin-logout" id="admin-logout-btn">Sair</button>
     </header>
 
+    <div class="admin-tabs">
+        <button class="admin-tab active" id="tab-avisos" data-tab="avisos">Avisos</button>
+        <button class="admin-tab" id="tab-clientes" data-tab="clientes">Atualizar Clientes</button>
+    </div>
+
     <div class="admin-content">
-        <h2 class="admin-section-title">Cadastrar Novo Aviso</h2>
-        <div class="admin-form-card">
-            <form id="form-aviso">
-                <input type="hidden" id="aviso-id">
-                <div class="admin-form-row">
-                    <div class="admin-form-group">
-                        <label class="admin-label">Cliente</label>
-                        <select class="admin-field" id="aviso-cliente" required>
-                            <option value="">Selecione o cliente...</option>
-                        </select>
-                    </div>
-                    <div class="admin-form-group">
-                        <label class="admin-label">Tipo de Aviso</label>
-                        <select class="admin-field" id="aviso-tipo">
-                            <option value="info">Informação</option>
-                            <option value="urgente">Urgente</option>
-                            <option value="atencao">Atenção</option>
-                            <option value="sucesso">Sucesso</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="admin-form-row">
-                    <div class="admin-form-group full">
-                        <label class="admin-label">Título do Aviso</label>
-                        <input type="text" class="admin-field" id="aviso-titulo" placeholder="Ex: Informação Importante" required>
-                    </div>
-                </div>
-                <div class="admin-form-row">
-                    <div class="admin-form-group full">
-                        <label class="admin-label">Mensagem</label>
-                        <textarea class="admin-field" id="aviso-mensagem" placeholder="Digite a mensagem que o cliente verá..." required></textarea>
-                    </div>
-                </div>
-                <div class="admin-form-row">
-                    <div class="admin-form-group">
-                        <label class="admin-label">Modo de Exibição</label>
-                        <select class="admin-field" id="aviso-modo">
-                            <option value="ate_confirmar">Mostrar até confirmar (padrão)</option>
-                            <option value="uma_vez">Mostrar apenas uma vez</option>
-                            <option value="sempre_pendente">Mostrar enquanto pendente</option>
-                        </select>
-                    </div>
-                    <div class="admin-form-group">
-                        <label class="admin-label">Ativo</label>
-                        <div style="padding-top:8px;">
-                            <label class="admin-toggle">
-                                <input type="checkbox" id="aviso-ativo" checked>
-                                <span class="admin-toggle-slider"></span>
-                            </label>
+
+        <!-- ============ ABA AVISOS ============ -->
+        <div class="admin-section active" id="section-avisos">
+            <h2 class="admin-section-title">Cadastrar Novo Aviso</h2>
+            <div class="admin-form-card">
+                <form id="form-aviso">
+                    <input type="hidden" id="aviso-id">
+                    <div class="admin-form-row">
+                        <div class="admin-form-group">
+                            <label class="admin-label">Cliente</label>
+                            <select class="admin-field" id="aviso-cliente" required>
+                                <option value="">Selecione o cliente...</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label class="admin-label">Tipo de Aviso</label>
+                            <select class="admin-field" id="aviso-tipo">
+                                <option value="info">Informação</option>
+                                <option value="urgente">Urgente</option>
+                                <option value="atencao">Atenção</option>
+                                <option value="sucesso">Sucesso</option>
+                            </select>
                         </div>
                     </div>
-                </div>
-                <div class="admin-form-actions">
-                    <button type="submit" class="admin-btn-sm admin-btn-primary" id="btn-salvar">Salvar Aviso</button>
-                    <button type="button" class="admin-btn-sm admin-btn-secondary" id="btn-cancelar" style="display:none;">Cancelar</button>
-                </div>
-            </form>
+                    <div class="admin-form-row">
+                        <div class="admin-form-group full">
+                            <label class="admin-label">Título do Aviso</label>
+                            <input type="text" class="admin-field" id="aviso-titulo" placeholder="Ex: Informação Importante" required>
+                        </div>
+                    </div>
+                    <div class="admin-form-row">
+                        <div class="admin-form-group full">
+                            <label class="admin-label">Mensagem</label>
+                            <textarea class="admin-field" id="aviso-mensagem" placeholder="Digite a mensagem que o cliente verá..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="admin-form-row">
+                        <div class="admin-form-group">
+                            <label class="admin-label">Modo de Exibição</label>
+                            <select class="admin-field" id="aviso-modo">
+                                <option value="ate_confirmar">Mostrar até confirmar (padrão)</option>
+                                <option value="uma_vez">Mostrar apenas uma vez</option>
+                                <option value="sempre_pendente">Mostrar enquanto pendente</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label class="admin-label">Ativo</label>
+                            <div style="padding-top:8px;">
+                                <label class="admin-toggle">
+                                    <input type="checkbox" id="aviso-ativo" checked>
+                                    <span class="admin-toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-form-actions">
+                        <button type="submit" class="admin-btn-sm admin-btn-primary" id="btn-salvar">Salvar Aviso</button>
+                        <button type="button" class="admin-btn-sm admin-btn-secondary" id="btn-cancelar" style="display:none;">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <h2 class="admin-section-title">Avisos Cadastrados</h2>
+            <div class="admin-filter-bar">
+                <select class="admin-field" id="filtro-cliente">
+                    <option value="">Todos os clientes</option>
+                </select>
+                <select class="admin-field" id="filtro-status">
+                    <option value="">Todos os status</option>
+                    <option value="ativo">Apenas ativos</option>
+                    <option value="inativo">Apenas inativos</option>
+                    <option value="pendente">Pendentes (não visualizados)</option>
+                    <option value="visualizado">Já visualizados</option>
+                </select>
+            </div>
+            <div id="lista-avisos"></div>
         </div>
 
-        <h2 class="admin-section-title">Avisos Cadastrados</h2>
-        <div class="admin-filter-bar">
-            <select class="admin-field" id="filtro-cliente">
-                <option value="">Todos os clientes</option>
-            </select>
-            <select class="admin-field" id="filtro-status">
-                <option value="">Todos os status</option>
-                <option value="ativo">Apenas ativos</option>
-                <option value="inativo">Apenas inativos</option>
-                <option value="pendente">Pendentes (não visualizados)</option>
-                <option value="visualizado">Já visualizados</option>
-            </select>
+        <!-- ============ ABA ATUALIZAR CLIENTES ============ -->
+        <div class="admin-section" id="section-clientes">
+
+            <!-- VIEW: LISTA DE CLIENTES -->
+            <div id="view-lista-clientes">
+                <h2 class="admin-section-title">Meus Clientes</h2>
+                <div class="admin-filter-bar">
+                    <input type="text" class="admin-search" id="busca-cliente" placeholder="🔎 Pesquisar cliente...">
+                </div>
+                <div id="lista-clientes"></div>
+            </div>
+
+            <!-- VIEW: EDIÇÃO DE CLIENTE -->
+            <div id="view-editar-cliente" style="display:none;">
+                <div class="admin-breadcrumb">
+                    <button id="btn-voltar-clientes">← Voltar para lista</button>
+                    <span class="admin-breadcrumb-sep">|</span>
+                    <span class="admin-breadcrumb-current" id="breadcrumb-cliente-nome"></span>
+                </div>
+
+                <div class="admin-subtabs">
+                    <button class="admin-subtab active" id="subtab-dados" data-subtab="dados">Dados do Portal</button>
+                    <button class="admin-subtab" id="subtab-avisos-cli" data-subtab="avisos-cli">Avisos do Cliente</button>
+                </div>
+
+                <div id="save-feedback" class="admin-save-feedback"></div>
+
+                <!-- SUB-ABA: DADOS -->
+                <div id="subpane-dados">
+                    <div class="admin-form-card">
+                        <div class="admin-form-row">
+                            <div class="admin-form-group">
+                                <label class="admin-label">Nome do Cliente</label>
+                                <input type="text" class="admin-field" id="cli-nome" readonly>
+                            </div>
+                            <div class="admin-form-group">
+                                <label class="admin-label">ID (Login)</label>
+                                <input type="text" class="admin-field" id="cli-id" readonly>
+                            </div>
+                        </div>
+                        <div class="admin-form-row">
+                            <div class="admin-form-group">
+                                <label class="admin-label">Competência</label>
+                                <input type="text" class="admin-field" id="cli-comp" placeholder="Ex: Outubro/2026">
+                            </div>
+                            <div class="admin-form-group">
+                                <label class="admin-label">Faturamento do Mês</label>
+                                <input type="text" class="admin-field" id="cli-fat" placeholder="Ex: R$ 5.100,00">
+                            </div>
+                        </div>
+                        <div class="admin-form-row">
+                            <div class="admin-form-group">
+                                <label class="admin-label">Acumulado do Ano</label>
+                                <input type="text" class="admin-field" id="cli-ac" placeholder="Ex: R$ 41.406,00">
+                            </div>
+                            <div class="admin-form-group">
+                                <label class="admin-label">Utilizado (MEI)</label>
+                                <input type="text" class="admin-field" id="cli-ut" placeholder="Ex: 51,2%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-card">
+                        <h3 style="font-family:var(--font-display); font-size:1rem; color:var(--off-white); margin-bottom:1rem;">Links dos Documentos</h3>
+                        <div class="admin-form-row">
+                            <div class="admin-form-group full">
+                                <label class="admin-label">Relatório Completo (Google Drive)</label>
+                                <input type="text" class="admin-field" id="cli-rel" placeholder="Cole aqui o link do relatório">
+                            </div>
+                        </div>
+                        <div class="admin-form-row">
+                            <div class="admin-form-group full">
+                                <label class="admin-label">Guia DAS (Google Drive)</label>
+                                <input type="text" class="admin-field" id="cli-das" placeholder="Cole aqui o link da guia DAS">
+                            </div>
+                        </div>
+                        <div class="admin-form-row">
+                            <div class="admin-form-group full">
+                                <label class="admin-label">Outros Documentos (Google Drive)</label>
+                                <input type="text" class="admin-field" id="cli-out" placeholder="Cole aqui o link de outros documentos">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-card">
+                        <h3 style="font-family:var(--font-display); font-size:1rem; color:var(--off-white); margin-bottom:1rem;">Postit de Recados</h3>
+                        <div class="admin-form-row">
+                            <div class="admin-form-group">
+                                <label class="admin-label">Exibir Postit?</label>
+                                <select class="admin-field" id="cli-av">
+                                    <option value="NAO">Não</option>
+                                    <option value="SIM">Sim</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="admin-form-row">
+                            <div class="admin-form-group full">
+                                <label class="admin-label">Texto do Recado</label>
+                                <textarea class="admin-field" id="cli-txt" placeholder="Digite o recado que aparecerá no postit do portal..." style="min-height:80px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-actions">
+                        <button type="button" class="admin-btn-sm admin-btn-primary" id="btn-salvar-cliente">Salvar Alterações</button>
+                        <button type="button" class="admin-btn-sm admin-btn-secondary" id="btn-cancelar-cliente">Cancelar</button>
+                    </div>
+                </div>
+
+                <!-- SUB-ABA: AVISOS DO CLIENTE -->
+                <div id="subpane-avisos-cli" style="display:none;">
+                    <div class="admin-form-card">
+                        <h3 style="font-family:var(--font-display); font-size:1rem; color:var(--off-white); margin-bottom:1rem;">Cadastrar Aviso para este Cliente</h3>
+                        <form id="form-aviso-cli">
+                            <input type="hidden" id="aviso-cli-id">
+                            <div class="admin-form-row">
+                                <div class="admin-form-group">
+                                    <label class="admin-label">Tipo</label>
+                                    <select class="admin-field" id="aviso-cli-tipo">
+                                        <option value="info">Informação</option>
+                                        <option value="urgente">Urgente</option>
+                                        <option value="atencao">Atenção</option>
+                                        <option value="sucesso">Sucesso</option>
+                                    </select>
+                                </div>
+                                <div class="admin-form-group">
+                                    <label class="admin-label">Modo de Exibição</label>
+                                    <select class="admin-field" id="aviso-cli-modo">
+                                        <option value="ate_confirmar">Mostrar até confirmar</option>
+                                        <option value="uma_vez">Mostrar apenas uma vez</option>
+                                        <option value="sempre_pendente">Mostrar enquanto pendente</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="admin-form-row">
+                                <div class="admin-form-group full">
+                                    <label class="admin-label">Título</label>
+                                    <input type="text" class="admin-field" id="aviso-cli-titulo" placeholder="Ex: Informação Importante" required>
+                                </div>
+                            </div>
+                            <div class="admin-form-row">
+                                <div class="admin-form-group full">
+                                    <label class="admin-label">Mensagem</label>
+                                    <textarea class="admin-field" id="aviso-cli-mensagem" placeholder="Digite a mensagem..." required></textarea>
+                                </div>
+                            </div>
+                            <div class="admin-form-actions">
+                                <button type="submit" class="admin-btn-sm admin-btn-primary" id="btn-salvar-aviso-cli">Salvar Aviso</button>
+                                <button type="button" class="admin-btn-sm admin-btn-secondary" id="btn-cancelar-aviso-cli" style="display:none;">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <h3 style="font-family:var(--font-display); font-size:1rem; color:var(--off-white); margin-bottom:1rem;">Avisos deste Cliente</h3>
+                    <div id="lista-avisos-cli"></div>
+                </div>
+            </div>
         </div>
-        <div id="lista-avisos"></div>
+
     </div>
 </div>
 
@@ -332,6 +567,24 @@
         adminLogin.classList.remove('hidden');
         adminSenha.value = '';
         adminSenha.focus();
+    });
+
+    /* ============================================================
+       NAVEGAÇÃO ENTRE TABS
+       ============================================================ */
+    let clienteSelecionadoId = null;
+
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + tab.dataset.tab).classList.add('active');
+            if (tab.dataset.tab === 'clientes') {
+                voltarParaLista();
+                carregarListaClientes();
+            }
+        });
     });
 
     /* ============================================================
@@ -425,7 +678,7 @@
     }
 
     /* ============================================================
-       FORM - SALVAR/EDITAR AVISO
+       FORM AVISO - SALVAR/EDITAR
        ============================================================ */
     const formAviso = document.getElementById('form-aviso');
     const btnSalvar = document.getElementById('btn-salvar');
@@ -505,10 +758,289 @@
     };
 
     /* ============================================================
-       FILTROS
+       FILTROS DE AVISOS
        ============================================================ */
     document.getElementById('filtro-cliente').addEventListener('change', carregarAvisos);
     document.getElementById('filtro-status').addEventListener('change', carregarAvisos);
+
+    /* ============================================================
+       LISTA DE CLIENTES
+       ============================================================ */
+    const buscaCliente = document.getElementById('busca-cliente');
+
+    async function carregarListaClientes() {
+        const lista = document.getElementById('lista-clientes');
+        const termo = buscaCliente.value.trim().toLowerCase();
+        const ids = Object.keys(bancoClientes);
+
+        const filtrados = ids.filter(id => {
+            const nome = bancoClientes[id].toLowerCase();
+            return !termo || nome.includes(termo) || id.toLowerCase().includes(termo);
+        });
+
+        if (filtrados.length === 0) {
+            lista.innerHTML = '<p class="admin-empty">Nenhum cliente encontrado.</p>';
+            return;
+        }
+
+        /* Buscar dados do banco para mostrar info resumida */
+        const { data: dbData } = await sb.from('clientes').select('*').in('cliente_id', filtrados);
+        const dbMap = {};
+        if (dbData) dbData.forEach(c => { dbMap[c.cliente_id] = c; });
+
+        lista.innerHTML = '';
+        filtrados.forEach(id => {
+            const nome = bancoClientes[id];
+            const db = dbMap[id];
+            const comp = db && db.comp ? db.comp : '—';
+            const fat = db && db.fat ? db.fat : '—';
+            const atualizado = db && db.updated_at ? new Date(db.updated_at).toLocaleDateString('pt-BR') : 'Sem registros';
+
+            const item = document.createElement('div');
+            item.className = 'admin-cliente-item';
+            item.innerHTML = `
+                <div class="admin-cliente-nome">${escaparHtml(nome)}</div>
+                <div class="admin-cliente-id">ID: ${escaparHtml(id)}</div>
+                <div class="admin-cliente-info">Competência: ${escaparHtml(comp)} | Faturamento: ${escaparHtml(fat)}</div>
+                <div style="font-size:0.72rem; color:var(--text-muted); margin-top:0.3rem;">Última atualização: ${atualizado}</div>
+                <div class="admin-cliente-actions">
+                    <button class="admin-btn-sm admin-btn-primary" onclick="selecionarCliente('${id}')">Selecionar</button>
+                </div>
+            `;
+            lista.appendChild(item);
+        });
+    }
+
+    buscaCliente.addEventListener('input', carregarListaClientes);
+
+    /* ============================================================
+       SELEÇÃO E EDIÇÃO DE CLIENTE
+       ============================================================ */
+    window.selecionarCliente = async function(id) {
+        clienteSelecionadoId = id;
+        const nome = bancoClientes[id];
+        document.getElementById('breadcrumb-cliente-nome').textContent = nome;
+        document.getElementById('cli-nome').value = nome;
+        document.getElementById('cli-id').value = id;
+
+        /* Buscar dados do banco, se existir */
+        const { data } = await sb.from('clientes').select('*').eq('cliente_id', id).maybeSingle();
+        if (data) {
+            document.getElementById('cli-comp').value = data.comp || '';
+            document.getElementById('cli-fat').value = data.fat || '';
+            document.getElementById('cli-ac').value = data.ac || '';
+            document.getElementById('cli-ut').value = data.ut || '';
+            document.getElementById('cli-rel').value = data.rel || '';
+            document.getElementById('cli-das').value = data.das || '';
+            document.getElementById('cli-out').value = data.out || '';
+            document.getElementById('cli-av').value = data.av || 'NAO';
+            document.getElementById('cli-txt').value = data.txt || '';
+        } else {
+            document.getElementById('cli-comp').value = '';
+            document.getElementById('cli-fat').value = '';
+            document.getElementById('cli-ac').value = '';
+            document.getElementById('cli-ut').value = '';
+            document.getElementById('cli-rel').value = '';
+            document.getElementById('cli-das').value = '';
+            document.getElementById('cli-out').value = '';
+            document.getElementById('cli-av').value = 'NAO';
+            document.getElementById('cli-txt').value = '';
+        }
+
+        document.getElementById('view-lista-clientes').style.display = 'none';
+        document.getElementById('view-editar-cliente').style.display = 'block';
+        mostrarSubpane('dados');
+        limparFeedback();
+        carregarAvisosDoCliente(id);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    function voltarParaLista() {
+        document.getElementById('view-editar-cliente').style.display = 'none';
+        document.getElementById('view-lista-clientes').style.display = 'block';
+        clienteSelecionadoId = null;
+        limparFeedback();
+    }
+
+    document.getElementById('btn-voltar-clientes').addEventListener('click', () => {
+        voltarParaLista();
+        carregarListaClientes();
+    });
+
+    /* ============================================================
+       SALVAR DADOS DO CLIENTE
+       ============================================================ */
+    document.getElementById('btn-salvar-cliente').addEventListener('click', async () => {
+        if (!clienteSelecionadoId) return;
+        limparFeedback();
+
+        const dados = {
+            cliente_id: clienteSelecionadoId,
+            nome: bancoClientes[clienteSelecionadoId],
+            comp: document.getElementById('cli-comp').value,
+            fat: document.getElementById('cli-fat').value,
+            ac: document.getElementById('cli-ac').value,
+            ut: document.getElementById('cli-ut').value,
+            rel: document.getElementById('cli-rel').value,
+            das: document.getElementById('cli-das').value,
+            out: document.getElementById('cli-out').value,
+            av: document.getElementById('cli-av').value,
+            txt: document.getElementById('cli-txt').value,
+            updated_at: new Date().toISOString()
+        };
+
+        /* Verificar se já existe registro, senão inserir */
+        const { data: existente } = await sb.from('clientes').select('cliente_id').eq('cliente_id', clienteSelecionadoId).maybeSingle();
+
+        if (existente) {
+            const { error } = await sb.from('clientes').update(dados).eq('cliente_id', clienteSelecionadoId);
+            if (error) { mostrarFeedback('Erro ao salvar: ' + error.message, 'error'); return; }
+        } else {
+            const { error } = await sb.from('clientes').insert(dados);
+            if (error) { mostrarFeedback('Erro ao salvar: ' + error.message, 'error'); return; }
+        }
+
+        mostrarFeedback('Alterações salvas com sucesso! O portal do cliente já mostra as informações atualizadas.', 'success');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.getElementById('btn-cancelar-cliente').addEventListener('click', () => {
+        if (clienteSelecionadoId) selecionarCliente(clienteSelecionadoId);
+    });
+
+    function mostrarFeedback(msg, tipo) {
+        const el = document.getElementById('save-feedback');
+        el.textContent = msg;
+        el.className = 'admin-save-feedback ' + tipo;
+    }
+
+    function limparFeedback() {
+        const el = document.getElementById('save-feedback');
+        el.textContent = '';
+        el.className = 'admin-save-feedback';
+    }
+
+    /* ============================================================
+       SUB-TABS DENTRO DO CLIENTE
+       ============================================================ */
+    document.querySelectorAll('.admin-subtab').forEach(subtab => {
+        subtab.addEventListener('click', () => {
+            mostrarSubpane(subtab.dataset.subtab);
+        });
+    });
+
+    function mostrarSubpane(nome) {
+        document.querySelectorAll('.admin-subtab').forEach(s => s.classList.remove('active'));
+        document.querySelector('.admin-subtab[data-subtab="' + nome + '"]').classList.add('active');
+        document.getElementById('subpane-dados').style.display = nome === 'dados' ? 'block' : 'none';
+        document.getElementById('subpane-avisos-cli').style.display = nome === 'avisos-cli' ? 'block' : 'none';
+    }
+
+    /* ============================================================
+       AVISOS DO CLIENTE (dentro da edição)
+       ============================================================ */
+    const formAvisoCli = document.getElementById('form-aviso-cli');
+
+    async function carregarAvisosDoCliente(clienteId) {
+        const lista = document.getElementById('lista-avisos-cli');
+        const { data, error } = await sb.from('avisos').select('*').eq('cliente_id', clienteId).order('created_at', { ascending: false });
+        if (error || !data || data.length === 0) {
+            lista.innerHTML = '<p class="admin-empty">Nenhum aviso para este cliente.</p>';
+            return;
+        }
+
+        const tipoLabels = { info: 'Informação', urgente: 'Urgente', atencao: 'Atenção', sucesso: 'Sucesso' };
+        lista.innerHTML = '';
+        data.forEach(a => {
+            const tipoLabel = tipoLabels[a.tipo] || 'Info';
+            const dataFmt = new Date(a.created_at).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+            const item = document.createElement('div');
+            item.className = 'admin-aviso-item';
+            item.innerHTML = `
+                <div class="admin-aviso-item-header">
+                    <div class="admin-aviso-item-title">${escaparHtml(a.titulo)}</div>
+                    <div class="admin-aviso-item-meta">
+                        <span class="admin-badge admin-badge-type-${a.tipo}">${tipoLabel}</span>
+                        <span class="admin-badge ${a.ativo ? 'admin-badge-active' : 'admin-badge-inactive'}">${a.ativo ? 'Ativo' : 'Inativo'}</span>
+                        <span class="admin-badge ${a.visualizado ? 'admin-badge-viewed' : 'admin-badge-pending'}">${a.visualizado ? 'Visualizado' : 'Pendente'}</span>
+                    </div>
+                </div>
+                <div class="admin-aviso-item-msg">${escaparHtml(a.mensagem)}</div>
+                <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:0.6rem;">Criado em: ${dataFmt}</div>
+                <div class="admin-aviso-item-actions">
+                    <button class="admin-btn-sm admin-btn-secondary" onclick="editarAvisoCli('${a.id}')">Editar</button>
+                    <button class="admin-btn-sm admin-btn-secondary" onclick="toggleAtivoCli('${a.id}', ${!a.ativo})">${a.ativo ? 'Desativar' : 'Ativar'}</button>
+                    <button class="admin-btn-sm admin-btn-secondary" onclick="marcarPendenteCli('${a.id}')">Marcar pendente</button>
+                    <button class="admin-btn-sm admin-btn-danger" onclick="excluirAvisoCli('${a.id}')">Excluir</button>
+                </div>
+            `;
+            lista.appendChild(item);
+        });
+    }
+
+    formAvisoCli.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!clienteSelecionadoId) return;
+        const id = document.getElementById('aviso-cli-id').value;
+        const dados = {
+            cliente_id: clienteSelecionadoId,
+            titulo: document.getElementById('aviso-cli-titulo').value,
+            mensagem: document.getElementById('aviso-cli-mensagem').value,
+            tipo: document.getElementById('aviso-cli-tipo').value,
+            modo_exibicao: document.getElementById('aviso-cli-modo').value,
+            ativo: true
+        };
+
+        if (id) {
+            await sb.from('avisos').update(dados).eq('id', id);
+        } else {
+            dados.visualizado = false;
+            await sb.from('avisos').insert(dados);
+        }
+
+        limparFormAvisoCli();
+        carregarAvisosDoCliente(clienteSelecionadoId);
+    });
+
+    function limparFormAvisoCli() {
+        document.getElementById('aviso-cli-id').value = '';
+        document.getElementById('aviso-cli-titulo').value = '';
+        document.getElementById('aviso-cli-mensagem').value = '';
+        document.getElementById('aviso-cli-tipo').value = 'info';
+        document.getElementById('aviso-cli-modo').value = 'ate_confirmar';
+        document.getElementById('btn-salvar-aviso-cli').textContent = 'Salvar Aviso';
+        document.getElementById('btn-cancelar-aviso-cli').style.display = 'none';
+    }
+
+    document.getElementById('btn-cancelar-aviso-cli').addEventListener('click', limparFormAvisoCli);
+
+    window.editarAvisoCli = async function(id) {
+        const { data, error } = await sb.from('avisos').select('*').eq('id', id).maybeSingle();
+        if (error || !data) return;
+        document.getElementById('aviso-cli-id').value = data.id;
+        document.getElementById('aviso-cli-titulo').value = data.titulo;
+        document.getElementById('aviso-cli-mensagem').value = data.mensagem;
+        document.getElementById('aviso-cli-tipo').value = data.tipo;
+        document.getElementById('aviso-cli-modo').value = data.modo_exibicao;
+        document.getElementById('btn-salvar-aviso-cli').textContent = 'Atualizar Aviso';
+        document.getElementById('btn-cancelar-aviso-cli').style.display = 'inline-block';
+    };
+
+    window.toggleAtivoCli = async function(id, novoValor) {
+        await sb.from('avisos').update({ ativo: novoValor }).eq('id', id);
+        carregarAvisosDoCliente(clienteSelecionadoId);
+    };
+
+    window.marcarPendenteCli = async function(id) {
+        await sb.from('avisos').update({ visualizado: false, visualizado_em: null }).eq('id', id);
+        carregarAvisosDoCliente(clienteSelecionadoId);
+    };
+
+    window.excluirAvisoCli = async function(id) {
+        if (!confirm('Tem certeza que deseja excluir este aviso?')) return;
+        await sb.from('avisos').delete().eq('id', id);
+        carregarAvisosDoCliente(clienteSelecionadoId);
+    };
 
     /* ============================================================
        INICIALIZAÇÃO
@@ -516,6 +1048,7 @@
     function iniciarPainel() {
         preencherClientes();
         carregarAvisos();
+        carregarListaClientes();
     }
 
     verificarAdmin();
